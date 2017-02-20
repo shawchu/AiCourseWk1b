@@ -133,10 +133,10 @@ def reduce_puzzle(values):
         # If no new values were added, stop the loop.
         stalled = solved_values_before == solved_values_after
         
-        if solved_values_after == len(values):
-            return values
-            if stalled:
-                return values
+#        if solved_values_after == len(values):
+#            return values
+#            if stalled:
+#                return values
 
         # Sanity check, return False if there is a box with zero available values:
         if len([box for box in values.keys() if len(values[box]) == 0]):
@@ -144,6 +144,7 @@ def reduce_puzzle(values):
     return values
 
 def search(values):
+    
     
     # copied from solution.py
     values = reduce_puzzle(values)
@@ -158,20 +159,30 @@ def search(values):
 
     # syntax from solution.py 
     n,s = min((len(values[s]), s) for s in boxes if len(values[s]) > 1)
-    print(n)
-    print(s)
+    #print(n)
+    #print(s)
     
     # syntax from solution.py
     # Now use recurrence to solve each one of the resulting sudokus, and 
-#    for value in values[s]:
-#        #print(values[s])
-#        new_sudoku = values.copy()
-#        #print(new_sudoku)
-#        new_sudoku[s] = value
-#        attempt = search(new_sudoku)
-#        #break
-#        if attempt:
-#            return attempt
+    for value in values[s]:
+        #print(values[s])
+        new_sudoku = values.copy()
+        #print(new_sudoku)
+        new_sudoku[s] = value
+        attempt = search(new_sudoku)
+        #print("attempt is  ", attempt)
+        #break
+        if attempt:
+            #display(attempt)
+            values = attempt
+            return attempt
+            #return values
+            #break
+    #return values
+      
+        
+        
+        
 
 unsolved1 = "..3.2.6..9..3.5..1..18.64....81.29..7.......8..67.82....26.95..8..2.3..9..5.1.3.."
 grid1 = grid_values(unsolved1)
@@ -189,11 +200,11 @@ reduce_puzzle(grid2)
 print("Before Search is....")
 display(grid2)
 
+#search(grid2)
+grid2 = search(grid2)
 
-search(grid2)
-#
-#print("After is....")
-#display(grid2)
+print("After is....")
+display(grid2)
 
 
 
