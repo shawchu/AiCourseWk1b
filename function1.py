@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sat Feb 18 17:13:32 2017
-
 @author: Shaw
 """
 
@@ -9,7 +8,6 @@ from utils import *
 
 def grid_values(grid):
     """Convert grid string into {<box>: <value>} dict with '123456789' value for empties.
-
     Args:
         grid: Sudoku grid in string form, 81 characters long
     Returns:
@@ -33,10 +31,8 @@ def grid_values(grid):
 
 def eliminate(values):
     """Eliminate values from peers of each box with a single value.
-
     Go through all the boxes, and whenever there is a box with a single value,
     eliminate this value from the set of values of all its peers.
-
     Args:
         values: Sudoku in dictionary form.
     Returns:
@@ -54,10 +50,8 @@ def eliminate(values):
 
 def only_choice(values):
     """Finalize all values that are the only choice for a unit.
-
     Go through all the units, and whenever there is a unit with a value
     that only fits in one box, assign the value to this box.
-
     Input: Sudoku in dictionary form.
     Output: Resulting Sudoku in dictionary form after filling in only choices.
     """
@@ -180,32 +174,88 @@ def search(values):
             #break
     #return values
       
+def naked_twins(values):
+    """Eliminate values using the naked twins strategy.
+    Args:
+        values(dict): a dictionary of the form {'box_name': '123456789', ...}
+    Returns:
+        the values dictionary with the naked twins eliminated from peers.
+    """
+
+    # Find all instances of naked twins
+    # Eliminate the naked twins as possibilities for their peers
+    
+    for unit in unitlist:
         
+        revdict = {}
+        for key in unit:
+            val = values[key]
+            if val not in revdict:
+                revdict[val] = [key]
+            else:
+                revdict[val].append(key)
+                
+        #print(revdict)
+        twinboxes = [vals for keyk, vals in revdict.items() if ((len(vals) == 2) and (len(keyk)==2))]
+        #print("twinboxes ", twinboxes)
+                
+        for tpair in twinboxes:
+            #print("tpair ", tpair)
+            punits = sorted(set(unit) - set(tpair))
+            #print("punits ", punits)
+            
+            for digit in values[tpair[0]]:
+                for pbox in punits:
+                    values[pbox] = values[pbox].replace(digit, '')
+    return values
+
+def assign_value(values, box, value):
+    """
+    Please use this function to update your values dictionary!
+    Assigns a value to a given box. If it updates the board record it.
+    """
+    values[box] = value
+    return values
+
+
         
         
 
-unsolved1 = "..3.2.6..9..3.5..1..18.64....81.29..7.......8..67.82....26.95..8..2.3..9..5.1.3.."
-grid1 = grid_values(unsolved1)
-#eliminate(grid1)
-#display(grid1)
-#only_choice(grid1)
-reduce_puzzle(grid1)
+#unsolved1 = "..3.2.6..9..3.5..1..18.64....81.29..7.......8..67.82....26.95..8..2.3..9..5.1.3.."
+#grid1 = grid_values(unsolved1)
+##eliminate(grid1)
+##display(grid1)
+##only_choice(grid1)
+#reduce_puzzle(grid1)
+##print("After is....")
+##display(grid1)
+#
+#unsolved2 = '4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
+#grid2 = grid_values(unsolved2)
+#reduce_puzzle(grid2)
+#
+#print("Before Search is....")
+#display(grid2)
+#
+##search(grid2)
+#grid2 = search(grid2)
+#
 #print("After is....")
-#display(grid1)
+#display(grid2)
 
-unsolved2 = '4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
-grid2 = grid_values(unsolved2)
-reduce_puzzle(grid2)
-
-print("Before Search is....")
-display(grid2)
-
-#search(grid2)
-grid2 = search(grid2)
-
-print("After is....")
-display(grid2)
+unsolved3 = "..3.2.6..9..3.5..1..18.64....81.29..7.......8..67.82....26.95..8..2.3..9..5.1.3.."
+grid3 = grid_values(unsolved3)
+eliminate(grid3)
+#assign_value(grid3, 'C9', '23')
+#assign_value(grid3, 'C8', '23')
 
 
+display(grid3)
+naked_twins(grid3)
+eliminate(grid3)
+only_choice(grid3)
+reduce_puzzle(grid3)
+print("After Naked Twins is")
+display(grid3)
 
 
